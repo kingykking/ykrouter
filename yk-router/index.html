@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <title>test hash route</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+  <script type="text/javascript" src="./router.js"></script>
+
+  <style type="text/css">
+    body {
+      font: 10.5pt arial;
+      color: #4d4d4d;
+      line-height: 150%;
+      width: 90%;
+    }
+    a {
+      font-size: 16px;padding: 10px
+    }
+    #content{
+      font-size:20px;font-weight:bold;padding: 20px
+    }
+  </style>
+</head>
+<body>
+  <a href="#/index?index=1&index=2">异步加载首页</a>
+  <a href="#/list?list=1&list=2">异步加载列表页</a>
+  <a href="#/detail?detail=1&name=1">异步加载详情页</a>
+  <a href="#/detail2?detail=2">同步加载详情页</a>
+  <div id="content">
+    <p style="color:#333">默认首页内容</p>
+  </div>
+  <script type="text/javascript" >
+  /*transition为加载js后的异步任务*/
+   	router.map('/index',function(transition){
+      router.async('js/index.js',transition)
+  	})
+  	router.map('/list',function(transition){
+      router.async('js/list.js',transition)
+  	})
+  	router.map('/detail',function(transition){
+      router.async('js/detail.js',transition)
+  	})
+  	router.map('/detail2',function(transition){
+      router.sync('js/detail2.js',transition)
+    })
+    /*页面跳转前*/
+    router.beforeEach(function(transition){
+      console.log('切换之前dosomething')
+      setTimeout(function(){
+        //模拟切换之前延迟，比如说做个异步登录信息验证
+         transition.next();
+      },100)
+    })
+    /*页面跳转后*/
+    router.afterEach(function(transition){
+      console.log("切换之后dosomething")
+    })
+    router.init()
+  </script>
+</body>
+</html>
+<!-- 页面跳转前  页面跳转 加载Js 页面跳转后 执行js  -->
+<!-- 加载js后没有回调 -->
